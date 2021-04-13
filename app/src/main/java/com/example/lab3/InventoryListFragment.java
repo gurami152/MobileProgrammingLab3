@@ -1,5 +1,6 @@
 package com.example.lab3;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -36,7 +37,13 @@ public class InventoryListFragment extends Fragment {
         listInventories.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // тут будуть функції обробки при натисканні на елемент списку
+                inventory = inventories.get(position);
+                Intent intent = new Intent(getActivity(), InventoryEditActivity.class);
+                intent.putExtra("title", inventory.getmTitle());
+                intent.putExtra("id", position);
+                intent.putExtra("date", inventory.getmDate());
+                intent.putExtra("status", inventory.ismSolved());
+                startActivityForResult(intent, 0);
             }
         });
         // формування інтенту та запуск активності при натисканні на кнопку додавання
@@ -54,10 +61,18 @@ public class InventoryListFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == getActivity().RESULT_OK) {
-            inventory.setmTitle(data.getStringExtra("title"));
-            inventory.setmDate((Date) data.getSerializableExtra("date"));
-            inventory.setmSolved(data.getBooleanExtra("status", false));
-            inventories.add(inventory);
+            if(data.getBooleanExtra("edit",false)){
+                inventory  = inventories.get(data.getIntExtra("id", 0));
+                inventory.setmTitle(data.getStringExtra("title"));
+                inventory.setmDate((Date) data.getSerializableExtra("date"));
+                inventory.setmSolved(data.getBooleanExtra("status", false));
+            }
+            else {
+                inventory.setmTitle(data.getStringExtra("title"));
+                inventory.setmDate((Date) data.getSerializableExtra("date"));
+                inventory.setmSolved(data.getBooleanExtra("status", false));
+                inventories.add(inventory);
+            }
         } else {
             Toast.makeText(getActivity(), "Wrong result", Toast.LENGTH_SHORT).show();
         }
