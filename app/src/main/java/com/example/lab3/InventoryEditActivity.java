@@ -25,7 +25,7 @@ public class InventoryEditActivity extends AppCompatActivity {
         Bundle bundle = new Bundle();
         bundle.putString("title", intent.getStringExtra("title"));
         bundle.putBoolean("status", intent.getBooleanExtra("status", false));
-        pos =  intent.getIntExtra("position",0);
+        pos =  intent.getIntExtra("id",0);
 
         if(fragment == null){
             fragment = new InventoryEditFragment();
@@ -55,6 +55,14 @@ public class InventoryEditActivity extends AppCompatActivity {
             intent.putExtra("date", inventory.getmDate());
             intent.putExtra("status", inventory.ismSolved());
             intent.putExtra("edit", true);
+            setResult(Activity.RESULT_OK,intent);
+            finish();
+            return true;
+        }
+        if (item.getItemId() == R.id.action_delete) {
+            Intent intent = new Intent();
+            intent.putExtra("id", pos);
+            intent.putExtra("delete", true);
             setResult(Activity.RESULT_OK,intent);
             finish();
             return true;

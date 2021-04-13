@@ -19,6 +19,7 @@ import java.util.Date;
 public class InventoryListFragment extends Fragment {
     Inventory inventory = new Inventory();
     private ArrayList<Inventory> inventories;
+    private InventoryAdapter adapter;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -32,7 +33,7 @@ public class InventoryListFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_inventory_list, container, false);
         ListView listInventories = (ListView) view.findViewById(R.id.listItems);
         // для формування структури списку використовуємо відповідний адаптер (див.нижче п.9)
-        InventoryAdapter adapter = new InventoryAdapter(this.getContext(), inventories);
+        adapter = new InventoryAdapter(this.getContext(), inventories);
         listInventories.setAdapter(adapter);
         listInventories.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -66,6 +67,10 @@ public class InventoryListFragment extends Fragment {
                 inventory.setmTitle(data.getStringExtra("title"));
                 inventory.setmDate((Date) data.getSerializableExtra("date"));
                 inventory.setmSolved(data.getBooleanExtra("status", false));
+            }
+            else if(data.getBooleanExtra("delete",false)){
+                inventories.remove(data.getIntExtra("id", 0));
+                adapter.notifyDataSetChanged();
             }
             else {
                 inventory.setmTitle(data.getStringExtra("title"));
